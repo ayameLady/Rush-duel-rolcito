@@ -159,7 +159,7 @@ let cartas = [
         rareza: "UR",
         atk: 2100,
         def: 1500,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Manda al Cementerio la carta de la parte superior de tu Deck.
 
 [Efecto]
@@ -177,7 +177,7 @@ Esta carta gana ATK igual [al número de Atributos diferentes en tu Cementerio] 
         rareza: "UR",
         atk: 2500,
         def: 1500,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Manda al Cementerio la carta de la parte superior de tu Deck.
 
 [Efecto]
@@ -195,7 +195,7 @@ Si esta carta destruyó un monstruo en batalla este turno, puede hacer un segund
         rareza: "UR",
         atk: 2500,
         def: 2500,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Durante el turno en que Invocaste esta carta de Modo Normal, cambia su posición de batalla (la Posición de Ataque se convierte en la Posición de Defensa boca arriba, y la Posición de Defensa se convierte en la Posición de Ataque boca arriba).
 
 [Efecto]
@@ -213,7 +213,7 @@ Hasta el final del próximo turno del adversario, mientras esta carta esté boca
         rareza: "UR",
         atk: 2400,
         def: 1800,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Ninguno.
 
 [Efecto]
@@ -231,7 +231,7 @@ Elige hasta 3 monstruos en tu Cementerio con el mismo Tipo que esta carta. Esta 
         rareza: "UR",
         atk: 2500,
         def: 0,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Durante el turno en el que has Invocado de Modo Normal esta carta Sacrificando un monstruo de Nivel 5 o mayor.
 
 [Efecto]
@@ -249,7 +249,7 @@ Elige 1 monstruo boca arriba de Nivel 8 o menor con el Nivel más bajo en el Cam
         rareza: "GRATIS",
         atk: 300,
         def: 200,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Ninguno.
 
 [Efecto]
@@ -267,7 +267,7 @@ Cuando el oponente declara un ataque directo: descarta esta carta. El daño de b
         rareza: "GRATIS",
         atk: 300,
         def: 200,
-        descripcion: `[Requerimiento]
+        descripcion: `[Requisito]
 Ninguno.
 
 [Efecto]
@@ -286,7 +286,7 @@ Cuando el oponente declara un ataque directo: descarta esta carta. El daño de b
         atk: "-",
         def: "-",
         descripcion:
-            `[Requerimiento]
+            `[Requisito]
 Tienes 3 o más monstruos de Tipo Máquina con el Atributo LUZ en tu Cementerio.
 
 [Efecto]
@@ -305,7 +305,7 @@ Invoca de Modo Especial 1 "Ciber Dragón" o "Proto Ciber Dragón" desde tu mano 
         atk: "-",
         def: "-",
         descripcion:
-            `[Requerimiento]
+            `[Requisito]
 Ninguno.
 
 [Efecto]
@@ -324,7 +324,7 @@ Invoca de Modo Especial, desde tu mano o Cementerio, 1 Monstruo Normal de Nivel 
         atk: "-",
         def: "-",
         descripcion:
-            `[Requerimiento]
+            `[Requisito]
 Ninguno.
 
 [Efecto]
@@ -343,7 +343,7 @@ Excava las 5 primeras cartas de tu Deck y muéstralas. Tu oponente elige una de 
         atk: "-",
         def: "-",
         descripcion:
-            `[Requerimiento]
+            `[Requisito]
 Cuando un monstruo del oponente declare un ataque.
 
 [Efecto]
@@ -362,7 +362,7 @@ Niega el ataque y termina la Fase de Batalla.`,
         atk: "-",
         def: "-",
         descripcion:
-            `[Requerimiento]
+            `[Requisito]
 Cuando tu adversario Invoca de Modo Normal o Especial un monstruo en Posición de Ataque boca arriba y tiene 2 o más monstruos en su Campo.
 
 [Efecto]
@@ -405,7 +405,7 @@ function generarTienda() {
      data-indice="${i}"
      onmouseenter="if(!esMobil()) mostrarCarta(${i}, event)"
      onmouseleave="if(!esMobil()) ocultarCarta()"
-     onclick="if(esMobil()) toggleCartaMobil(${i}, event)">
+     onclick="if(esMobil()) abrirCartaMobil(${i}, event)">
 
     <img
         src="${cartas[i].imagen}"
@@ -494,7 +494,7 @@ function mostrarCarta(indice, evento) {
     // Colorea [Requirement] y [Effect] con clases CSS
     // y convierte \n en <br> para los saltos de línea
     let desc = carta.descripcion
-        .replace("[Requerimiento]", '<span class="requirement">[REQUERIMIENTO]</span>')
+        .replace("[Requisito]", '<span class="requirement">[REQUISITO]</span>')
         .replace("[Efecto]",      '<span class="effect">[EFECTO]</span>')
         .replaceAll("\n", "<br>");
 
@@ -544,27 +544,20 @@ function mostrarCarta(indice, evento) {
 
 
 
-// toggleCartaMobil(indice, evento)
-// En móvil: primer tap abre el panel centrado en pantalla,
-// segundo tap sobre la misma carta (o cualquier otra) lo cierra/cambia.
-function toggleCartaMobil(indice, evento) {
+// abrirCartaMobil(indice, evento)
+// En móvil: tap en una carta abre el panel centrado en pantalla.
+// El panel se cierra haciendo tap sobre él mismo (onclick en el panel).
+function abrirCartaMobil(indice, evento) {
     evento.stopPropagation();
 
-    if (panelCartaAbierto === indice) {
-        // Segundo tap en la misma carta → cerrar
-        ocultarCarta();
-    } else {
-        // Primera vez o carta diferente → abrir centrado
-        mostrarCarta(indice, evento);
-        panelCartaAbierto = indice;
+    // Rellena el panel con los datos de la carta
+    mostrarCarta(indice, evento);
 
-        // En móvil posicionamos el panel centrado en pantalla
-        // (el CSS ya lo centra con top:50% + translateY(-50%),
-        // pero sobreescribimos el left/top que pone mostrarCarta)
-        let panel = document.getElementById("panelInfo");
-        panel.style.top  = "50%";
-        panel.style.left = "4vw";
-    }
+    // Sobreescribir la posición que calcula mostrarCarta
+    // para que quede centrado en pantalla (el CSS hace el resto con translateY)
+    let panel = document.getElementById("panelInfo");
+    panel.style.top  = "50%";
+    panel.style.left = "4vw";
 }
 // =============================================
 // 6. FILTROS
